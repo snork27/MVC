@@ -3,39 +3,70 @@ class Application
 {
     public function __construct()
     {
+        // Получаем урл
         $url = $_GET['url'];
-//        $url = ucfirst($url);
         $url = rtrim($url, '/');
         $url = explode('/', $url);
-        $file = 'controllers/' . $url[0] . '.php';
 
+        // Сканируем папку с контроллеми
         $files = scandir('controllers/');
 
-        if (!empty($url)) {
-            foreach ($files as $url) {
-                if ($url != '.' and $url != '..'){
-                    $x[] = 'controllers/' . $url;
-                }
+        // Маппим файлы и классы
+        $map = array();
+        foreach ($files as $file){
+            if ($file != '.' and $file != '..'){
+                $map['controllers/' . $file] = str_ireplace('.php', '', $file);
             }
         }
 
-            if (file_exists($file)) {
-                require $file;
-            } else {
-                require "controllers/CustomError.php";
-                $controller = new CustomError();
-                return false;
+        // Ищем нужный класс
+        foreach ($map as $file => $className){
+            if (strtolower($url[0]) == strtolower($className)){
+                require_once  $file;
+                break;
             }
+        }
 
-            $controller = new $url[0];
+        // Если не нашли, то вызываем контроллер ошибок
+        if (class_exists($className)){
+            $controller = new $className();
+        }
+        else {
+            require 'controllers/CustomError.php';
+            $controller = new CustomError();
+            return false;
+        }
 
-            if (isset($url[1])) {
-                $action = $url[1];
-                $controller->$action($url[2]);
-            } else {
-                if (isset($url[0])) {
-                    $controller->$url[0];
-                }
-            }
+
+
+
+        //
+
+//        echo $url[0];
+//
+//
+//        echo '<pre>';
+//        print_r($map);
+//
+//        exit();
+//
+//        $urlController = $url[0];
+//
+//
+//        if (!class_exists($url[0])) {
+//            echo "Контроллер не найден";
+//            exit();
+//        }
+//
+//        $controller = new $url[0];
+
+//            if (isset($url[1])) {
+//                $action = $url[1];
+//                $controller->$action($url[2]);
+//            } else {
+//                if (isset($url[0])) {
+//                    $controller->$url[0];
+//                }
+//            }
         }
     }
