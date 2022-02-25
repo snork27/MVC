@@ -1,5 +1,5 @@
 <?php
-class help extends Controller {
+class Help extends Controller {
     public function __construct() {
         parent::__construct();
         echo "Мы в контроллере Help ";
