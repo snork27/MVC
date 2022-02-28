@@ -27,6 +27,12 @@ class Application
             }
         }
 
+        //Вид страницы
+        if($url[0] == 'view'){
+            $app = new View();
+            return false;
+        }
+
         // Если не нашли, то вызываем контроллер ошибок
         if (class_exists($className)) {
             $controller = new $className();
